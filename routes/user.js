@@ -67,9 +67,11 @@ router.post('/register', function(req, res) {
 
                 // Hash password
                 bcrypt.genSalt(10, function(err, salt) {
-                    bcrypt.hash(newUser.password, salt, function(err,hash) {
+                    bcrypt.hash(newUser.password, salt, function(err, hash) {
                         if(err) throw err;
                         // Set password to hashed
+                        newUser.password = hash;
+                        // save user
                         newUser.save()
                         .then(user => {
                             req.flash('success_msg', 'Successfully registered, please log in');
@@ -93,5 +95,12 @@ router.post('/login', function(req, res, next) {
         failureFlash: true
     })(req, res, next);
 });
+
+// Logout handle
+router.get('/logout', function(req, res) {
+    req.logout();
+    req.flash('success_msg', 'You have succesfully logged out' );
+    res.redirect('/user/login')
+})
 
 module.exports = router;
